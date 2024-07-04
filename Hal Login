@@ -1,0 +1,70 @@
+import java.util.Scanner;
+import java.util.Random;
+
+public class Akun {
+    static final int Max_Percobaan_Login = 3;
+    static final String Nama_user = "admin";
+    static final String Password = "123";
+    static final int Percobaan_Captcha = 4;
+    static final int Max_Percobaan_Captcha = 5;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
+
+        int percobaanLogin = 0;
+
+        while (percobaanLogin < Max_Percobaan_Login) {
+            System.out.print("Masukkan nama pengguna: ");
+            String username = scanner.nextLine();
+
+            System.out.print("Masukkan kata sandi: ");
+            String password = scanner.nextLine();
+
+            if (username.equals(Nama_user) && password.equals(Password)) {
+                int percobaanCaptcha = 0;
+                while (percobaanCaptcha < Max_Percobaan_Captcha) {
+                    String captcha = generateCaptcha(random);
+                    System.out.println("CAPTCHA: " + captcha);
+
+                    System.out.print("Masukkan CAPTCHA: ");
+                    String inputCaptcha = scanner.nextLine();
+
+                    if (inputCaptcha.equals(captcha)) {
+                        System.out.println("Login berhasil!");
+                        scanner.close();
+                        return;
+                    } else {
+                        System.out.println("CAPTCHA salah. Silakan coba lagi.");
+                        percobaanCaptcha++;
+                    }
+                }
+
+                System.out.println("Batas percobaan CAPTCHA tercapai. Silakan ulangi login.");
+            } else {
+                percobaanLogin++;
+                if (percobaanLogin == Max_Percobaan_Login) {
+                    System.out.println("Jumlah percobaan login maksimum tercapai. Akun terkunci.");
+                    break;
+                } else {
+                    System.out.println("Nama pengguna atau kata sandi salah. Silakan coba lagi.");
+                }
+            }
+        }
+
+        System.out.println("Ulangi login dari awal.");
+        main(args);
+    }
+
+    static String generateCaptcha(Random random) {
+        StringBuilder captcha = new StringBuilder();
+        for (int i = 0; i < Percobaan_Captcha; i++) {
+            if (random.nextBoolean()) {
+                captcha.append((char) (random.nextInt(26) + 'a'));
+            } else {
+                captcha.append(random.nextInt(10));
+            }
+        }
+        return captcha.toString();
+    }
+}
